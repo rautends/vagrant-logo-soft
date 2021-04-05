@@ -1,0 +1,257 @@
+# EN: DESCRIPTION
+
+# LOGO SoftComfort: step by step install on GNU/Linux distros, not Suse/RHEL/openSuse/Fedora based.
+
+# Tested on Debian Jessie and other Debian based distros: Linux Mint, LMDE, Ubuntu and its derivatives.
+# Tested on Arch Linux and other Arch based distros: ArchBang, Manjaro.
+
+# DE: BESCHREIBUNG
+
+# Schritte zur Installation von LOGO SoftComfort für GNU/Linux Distributionen, die nicht auf Suse/RHEL/openSuse/Fedora basieren.
+
+# Getestet für Debian Jessie [1] und andere auf Debian basierende Distributionen: Linux Mint, LMDE, Ubuntu und seine Abkömmlinge.
+# Getestet für Arch Linux und andere auf Arch basierende Distributionen: ArchBang, Manjaro.
+
+------------
+
+# EN: DEFINITIONS
+# DE: DEFINITIONEN
+
+1.
+# /$mount_point
+# EN: absolute path to install media mount directory (DVD/CD, USBdrive), could be /media/ /media/$user/, /media/CDRom/; /media/USBdrive/; etc.
+# DE: absoluter Pfad zum Installationsmedium (DVD/CD, USB-Laufwerk), beispielsweise /media/ /media/$user/, /media/CDRom/, /media/USBdrive/, etc.
+
+2. 
+# /$install_path
+# EN: absolute path to target Logo SoftComfort installation directory.
+# DE: absoluter Pfad zum Verzeichnis, in dem Logo SoftComfort installiert werden soll.
+
+3.
+# /Application_[ARCH]; [ARCH]=32 | [ARCH]=64
+# EN: container directory of subdirectories and files to install on a specific system architecture (32 or 64 bits).
+# DE: Verzeichnis, für Unterverzeichnisse und Dateien, die abhängig von der Systemarchitektur sind (32 oder 64 Bits).
+
+4.
+# /$librxtx_path
+# EN: absolute path to Java librxtx* native directory (distro dependent).
+# DE: absoluter Pfad zum Verzeichnis der Java-Laufzeitbibliotheken librxtx* (Distributionsabhängig).
+
+------------
+
+# EN: PROCEDURE
+# DE: DURCHFÜHRUNG
+
+1.
+# EN: Run an interactive shell as root. NOTE: if user installing Logo SoftComfort don't know the root password but has privileges escalation (sudoer), must execute sudo su - and enter his own password.
+# DE: Starten sie als Systemadministrator eine interaktive Shell. ANMERKUNG: Falls Sie sich nicht als Systemadministrator anmelden können, aber mittels sudo su Ihre Berechtigungen ausweiten können, verwenden Sie dieses Kommando und ihr eigenes Passwort.
+
+[$user@$hostname ~]$ su -
+
+2.
+# EN: Change working directory to /
+# DE: Wechseln Sie in das Wurzelverzeichnis /
+
+[root@$hostname ~]# cd /
+
+3.
+# EN: Create target installation directory. To adhere to Linux standards, and allow Logo SoftComfort execution to all users, is preferable to create $install_dir under /opt directory (i.e.: /opt/LogoSC/). NOTE: Do NOT set up $install_dir under any user directory, could be accidental or intentionally modified or removed!.
+# DE: Erzeugen Sie das Zielverzeichnis. Entsprechend der Standards für Linux und um Logo SoftComfort allen Benutzern bereitzustellen, sollte sich dieses unter /opt (z.B.: /opt/LogoSC/) liegen. ANMERKUNG: Wenn Sie $install_dir in einem Benutzerverzeichnis anlegen, kann es absichtlich oder aus Versehen verändert oder entfernt werden. Insofern wird von einer Installation in einem Benutzerverzeichnis abgeraten.
+
+[root@$hostname /]# mkdir /$install_path
+
+4.
+# EN: from install media, recursively copy to target install directory: application directories and files, mechanical design, languages, licenses, manual online help, examples and USB cable driver installer.
+# DE: Kopieren Sie folgende Objekte vom Installationsmedium in das Installationsverzeichnis: Anwendungsverzeichnis und Dateien, CAD, Sprachen, Lizenzen, Online-Handbuch, Beispiele und die Installationsdateien und Treiber zur USB-Verbindung.
+
+[root@$hostname /]# cp -r /$mount_point/Linux/Application_[ARCH]/ /$install_path/
+[root@$hostname /]# cp -r /$mount_point/CAD/ /$install_path/
+[root@$hostname /]# cp -r /$mount_point/Language/ /$install_path/
+[root@$hostname /]# cp -r /$mount_point/License/ /$install_path/
+[root@$hostname /]# cp -r /$mount_point/Manual/ /$install_path/ 
+[root@$hostname /]# cp -r /$mount_point/Onlinehelp/ /$install_path/
+[root@$hostname /]# cp -r /$mount_point/Sample/ /$install_path/
+[root@$hostname /]# cp -r /$mount_point/Linux/USBDriver/ /$install_path/
+
+5.
+# EN: syncronize buffers, unmount install media [optional: eject DVD/CD].
+# DE: Synchronisieren Sie die Dateisysteme und heben Sie die Einbindung des Installationsmediums auf [optional: DVD/CD auswerfen lassen].
+
+[root@$hostname /]# sync && umount /$mount_point [&& eject /dev/sr0]
+
+6.
+# EN: set execute permission for other users to LOGOComfort init script.
+# DE: Setzen Sie die Bits zur Ausführbarkeit der Datei LOGOComfort für andere Benutzer.
+
+[root@$hostname /]# chmod 755 /$install_path/Application_[ARCH]/LOGOComfort
+
+7.
+# EN: create /sysconfig/network/ directory under /etc .
+# DE: Erzeugen Sie ein Verzeichnis /sysconfig/network/ in /etc . [2]
+
+[root@$hostname /]# mkdir /etc/sysconfig/network/
+
+8.
+# EN: find out ethernet and wifi interface names.
+# DE: Bestimmen Sie die Namen der Netzwerk- und WLAN-Schnittstelle.
+
+# EN: Debian & ... example:
+# DE: Beispielausgabe für Debian & ... :
+
+[root@$hostname /]# ifconfig
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+          RX packets:83 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:83 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:7766 (7.5 KiB)  TX bytes:7766 (7.5 KiB)
+
+eth0      Link encap:Ethernet  HWaddr 09:00:12:90:e3:e5  
+          inet addr:192.168.1.29 Bcast:192.168.1.255  Mask:255.255.255.0
+          inet6 addr: fe80::a00:27ff:fe70:e3f5/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:54071 errors:1 dropped:0 overruns:0 frame:0
+          TX packets:48515 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:22009423 (20.9 MiB)  TX bytes:25690847 (24.5 MiB)
+          Interrupt:10 Base address:0xd020 
+
+wlan0     Link encap:Ethernet  HWaddr 58:a2:c2:93:27:36  
+          inet addr:192.168.1.64  Bcast:192.168.2.255  Mask:255.255.255.0
+          inet6 addr: fe80::6aa3:c4ff:fe93:4746/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:436968 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:364103 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:115886055 (110.5 MiB)  TX bytes:83286188 (79.4 MiB)
+
+# EN: Arch Linux & ... exmaple:
+# DE: Beispielausgabe für Arch Linux & ... :
+
+[root@$hostname /]# ip link
+
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default 
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+2: enp7s0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc fq_codel state DOWN mode DEFAULT group default qlen 1000
+    link/ether 00:1a:80:5b:16:ab brd ff:ff:ff:ff:ff:ff
+3: wlp6s0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP mode DORMANT group default qlen 1000
+    link/ether 00:1d:e0:7c:02:85 brd ff:ff:ff:ff:ff:ff
+
+9.
+# EN: create dummy interfaces configuration files (ifcfg-ethernet_interface_name, ifcfg-wifi_interface_name) into /sysconfig/network/ directory.
+# DE: Erzeugen Sie im Verzeichnis /sysconfig/network/ Pseudo-Konfigurationsdateien für die beiden Schnittstellen (ifcfg-Netzwerkschnittstellenbezeichnung, ifcfg-Drahtlosschnittstellenbezeichnung).
+
+# EN: Debian & ... example:
+# DE: Beispieleingabe für Debian & ... :
+
+[root@$hostname /]# touch /etc/sysconfig/network/ifcfg-eth0
+[root@$hostname /]# touch /etc/sysconfig/network/ifcfg-wlan0 
+
+# EN: Arch Linux & ... exmaple:
+# DE: Beispieleingabe für Arch Linux & ... :
+
+[root@$hostname /]# touch /etc/sysconfig/network/ifcfg-enp7s0 
+[root@$hostname /]# touch /etc/sysconfig/network/ifcfg-wlp6s0 
+
+10.
+# EN: remove librxtx* libraries copied into Logo SoftComfort install directory ($install_dir).
+# DE: Entfernen Sie die Laufzeitbibliotheken librxtx* im Installationsverzeichnis ($install_dir).
+
+[root@$hostname /]# rm /$install_path/Application_[ARCH]/bin/librxtxSerial.so
+[root@$hostname /]# rm /$install_path/Application_[ARCH]/bin/librxtxParallel.so
+
+11.
+# EN: install native distro Java rxtx libraries.
+# DE: Installieren Sie die zu Ihrer Distribution passenden rxtx-Laufzeitbibliotheken für Java.
+
+# EN: Debian & ... example:
+# DE: Beispielausgabe für Debian & ... :
+
+[root@$hostname /]# apt-get install librxtx-java
+
+# EN: Arch Linux & ... exmaple:
+# DE: Beispielausgabe für Arch Linux & ... :
+
+[root@$hostname /]# pacman -S java-rxtx
+
+12.
+# EN: locate native (distro dependent) librxtx* directory ( $librxtx_path ). Tipically found in /lib or /usr/lib.
+# DE: Suchen Sie die rxtx-Laufzeitbibliotheken Ihrer Distribution ( $librxtx_path ). Typischwerweise befinden sie sich unter /lib oder /usr/lib.
+
+[root@$hostname /]# find / -iname 'librxtx*.so'
+
+13.
+# EN: create symbolic links to native librxtx* libraries into Logo SoftComfort install directory.
+# DE: Erzeugen Sie anstelle der gelöschten Laufzeitbibliotheks-Dateien einen symbolischen Link zu den entsprechenden Dateien Ihrer Distribution.
+
+[root@$hostname /]# ln -s /$librxtx_path/librxtxSerial.so /$install_path/Application_[ARCH]/bin/librxtxSerial.so
+[root@$hostname /]# ln -s /$librxtx_path/librxtxParallel.so /$install_path/Application_[ARCH]/bin/librxtxParallel.so
+
+14.
+# EN: add Logo SoftComfort user(s) to uucp and lock groups.
+# DE: Fügen Sie die Benutzer von Logo SoftComfort den Gruppen uucp und lock zu. [3]
+
+[root@$hostname /]# usermod -aG uucp,lock $user
+
+15.
+# EN: [OPTIONAL] Install the USB cable driver provided in /$install_path/USBDriver/linux_VCP_v26_driver_src.zip. NOTE: modern Linux kernels (>=3.0) already have cp210x.ko driver included in its modules, no user install required.
+# DE: [OPTIONAL] Installieren Sie aus /$install_path/USBDriver/linux_VCP_v26_driver_src.zip den Treiber für die USB-Verbindung. Da moderne Linux Kernel ab Version 3.0 den Treiber cp210x.ko bereits als Modul laden, ist dies im Regelfall nicht nötig.
+
+16.
+# EN: [OPTIONAL] Create Logo SoftComfort launchers in menus and desktops, and symbolics links to /$install_path/Application_[ARCH]/LOGOComfort script into users directories. Read the documentation of your distro, desktop environment and/or window manager.
+# DE: [OPTIONAL] Erzeugen Sie anhand der Dokumentation zu Ihrer Distribution, Ihrem Desktopsystem beziehungsweise Ihrem Fenstermanager Starter für Logo SoftComfort. Erzeugen Sie in den persönlichen Verzeichnissen der Benutzer symbolische Links zum Installationsverzeichnis /$install_path/Application_[ARCH]/LOGOComfort.
+
+17.
+# EN: exit root shell and return to user shell.
+# DE: Verlassen Sie die Systemadministrations-Shell und kehren in eine Benutzer-Shell zurück.
+
+[root@$hostname /]# exit
+
+18.
+# EN: LAUNCH LOGO SOFTCOMFORT PROGRAM (don't close the virtual terminal until LSC has been closed!)
+# DE: Starten Sie das Programm LOGO SoftComfort. Schließen Sie das Terminal erst nach Beenden von LOGO SoftComfort!
+
+[$user@$hostname ~]$ sh /$install_path/Application_[ARCH]/LOGOComfort
+
+------------
+
+# EN:
+# ToDo: [OPTIONAL] to test install procedure on other outstanding distros (Gentoo, Slackware) and on distros which have no compliance with the Linux Filesystem Hierarchy Standard (Tiny Core Linux, Gobolinux, NixOS).
+
+# DE:
+# ToDo: [OPTIONAL] Tests für hier nicht behandelte Distributionen (Gentoo, Slackware) und Distributionen, die  sich nicht an die Linux Filesystem Hierarchy als Standard halten (Tiny Core Linux, Gobolinux, NixOS).
+
+------------
+
+License/Licencia: Creative Commons - Attribution | CC-By
+
+Author/Autor:
+Daniel H. Mirkin
+danielmirkin@gmail.com
+
+Thanks: to Mr. WWEE for tips on ethernet/wifi interfaces!
+
+Contributors:
+
+------------
+
+EN: German translation:
+DE: Deutsche Übersetzung:
+Markus Hiereth
+translation@hiereth.de
+Stand 2018-01-15
+
+Anmerkungen des Übersetzers:
+
+[1] In Zusammenhang mit der Übersetzung wurden die Anleitung für ein
+System mit Debian 9 (Stretch) nachvollzogen.
+
+[2] Um beide Verzeichnisse in einem Zug zu erzeugen, ist mkdir mit der Option -p zu Verwenden. (Fehler im Original.)
+
+[3] Die Gruppe lock existiert standardmäßig in Debian 9 offenbar nicht mehr.
+
+English original version has been published on:
+https://support.industry.siemens.com/tf/ww/en/posts/step-by-step-guide-to-install-logo-softcomfort-on-linux-distros-not-suse/129278

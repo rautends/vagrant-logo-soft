@@ -1,0 +1,54 @@
+[raute@localhost VM]$ sh ./Setup.bin --help
+Preparing to install
+Extracting the JRE from the installer archive...
+Unpacking the JRE...
+Extracting the installation resources from the installer archive...
+Configuring the installer for this system's environment...
+
+Launching installer...
+
+Usage: Setup [-f <path_to_installer_properties_file> | -options]
+            (to execute the installer)
+
+where options include:
+    -? 		show this help text
+    -h 		show this help text
+    -help 	show this help text
+    --help 	show this help text
+    -i [gui | console | silent]
+            specify the user interface mode for the installer
+    -D<name>=<value>
+            specify installer properties
+    -r <path_to_generate_response_file>
+            Generates response file.
+JVM heap size options are only applicable to Installers
+    -jvmxms <size>
+            Specify JVM initial heap size.
+    -jvmxmx <size>
+            Specify JVM maximum heap size.
+The options field may also include the following in case of uninstaller
+if it is enabled for Maintenance Mode
+    -add <feature_name_1> [<feature_name_2 ...]
+            Add Specified Features
+    -remove <feature_name_1> [<feature_name_2 ...]
+            Remove Specified Features
+    -repair
+            Repair Installation
+    -uninstall
+            Uninstall
+
+notes:
+    1. the path to the installer properties file may be either absolute,
+       or relative to the directory in which the installer resides.
+    2. if an installer properties file is specified and exists, all other
+       command line options will be ignored.
+    3. if a properties file named either 'installer.properties' or 
+       <NameOfInstaller>.properties resides in the same directory as the
+       installer, it will automatically be used, overriding all other command
+       line options, unless the '-f' option is used to point to another valid
+       properties file.
+    4. if an installer properties file is specified but does not exist, the
+       default properties file, if present, will be used.  Otherwise, any
+       supplied command line options will be used, or if no additional
+       options were specified, the installer will be run using the default
+       settings.

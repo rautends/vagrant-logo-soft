@@ -1,0 +1,16 @@
+https://support.industry.siemens.com/cs/document/109783346/delivery-release-of-logo!-8-3?dti=0&lc=en-WW
+https://support.industry.siemens.com/cs/document/109767413/logo!-soft-comfort-v8-2-sp1-(-download-hinweise-anleitung-)?dti=0&lc=de-WW
+https://support.industry.siemens.com/tf//WW/en/posts/java-lang-unsupportedoperationexeption-adapter-type-is-not-support/160338?page=0&pageSize=10
+
+
+$ cp -a classes.jar classes.jar_orig
+$ jar -xvf classes.jar DE/siemens/ad/logo/util/dipmgr/NetworkAdapterSuseUtil.class
+$ sed -i "s/sysconfig\/network/sysconfig\/netsuse/g" ./DE/siemens/ad/logo/util/dipmgr/NetworkAdapterSuseUtil.class
+$ jar -uvf classes.jar ./DE/siemens/ad/logo/util/dipmgr/NetworkAdapterSuseUtil.class
+
+# mkdir /etc/sysconfig/netsuse
+# touch /etc/sysconfig/netsuse/ifcfg-enp2s0
+
+https://support.industry.siemens.com/tf/WW/de/posts/logo-8-schnittstellenanwahl/116893?page=2&pageSize=10
+
+/usr/local/bin/Siemens/LOGOComfort_V8.3
